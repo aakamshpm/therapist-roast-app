@@ -1,1 +1,167 @@
 @import "tailwindcss";
+
+@theme {
+  --font-comic: "Comic Sans MS", cursive;
+  --font-ugly: "Times New Roman", serif;
+
+  --color-wood: #8b4513;
+  --color-ugly-teal: #008b8b;
+  --color-hot-pink: #ff69b4;
+  --color-vomit-green: #9acd32;
+  --color-hospital-green: #90ee90;
+  --color-beige: #f5f5dc;
+  --color-puke-yellow: #ffff66;
+  --color-office-tan: #d2b48c;
+  --color-toxic-orange: #ff8c00;
+
+  --animate-blink-slow: blink 2s linear infinite;
+  --animate-bounce-annoying: bounce 0.5s infinite;
+  --animate-spin-wrong: spin 3s linear reverse infinite;
+}
+
+body {
+  font-family: var(--font-comic);
+  background: linear-gradient(
+    45deg,
+    var(--color-hot-pink),
+    var(--color-ugly-teal),
+    var(--color-puke-yellow)
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.wood-panel {
+  background-color: var(--color-wood);
+  background-image: linear-gradient(
+      45deg,
+      rgba(165, 99, 42, 0.5) 25%,
+      transparent 25%
+    ),
+    linear-gradient(-45deg, rgba(165, 99, 42, 0.5) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(165, 99, 42, 0.5) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(165, 99, 42, 0.5) 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+.ugly-border {
+  border: 4px ridge var(--color-office-tan);
+  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.3),
+    2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.retro-button {
+  background: linear-gradient(to bottom, #f0f0f0, #d0d0d0);
+  border: 2px outset #d0d0d0;
+  color: black;
+  font-family: var(--font-comic);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.retro-button:hover {
+  background: linear-gradient(to bottom, #e0e0e0, #c0c0c0);
+  transform: translate(1px, 1px);
+}
+
+.retro-button:active {
+  border: 2px inset #d0d0d0;
+  transform: translate(2px, 2px);
+}
+
+.message-bubble-user {
+  background: var(--color-hospital-green);
+  border: 2px solid var(--color-vomit-green);
+  border-radius: 15px 15px 5px 15px;
+  color: #000;
+  font-family: var(--font-ugly);
+}
+
+.message-bubble-ai {
+  background: var(--color-hot-pink);
+  border: 2px solid var(--color-toxic-orange);
+  border-radius: 15px 15px 15px 5px;
+  color: #000;
+  font-family: var(--font-comic);
+  box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+}
+
+.fake-loading {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-ugly-teal),
+    var(--color-ugly-teal) 10px,
+    var(--color-puke-yellow) 10px,
+    var(--color-puke-yellow) 20px
+  );
+  animation: loading-scroll 1s linear infinite;
+}
+
+@keyframes loading-scroll {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 20px 0;
+  }
+}
+
+/* Blinking cursor */
+.blink {
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Therapy certificate styles */
+.fake-certificate {
+  background: var(--color-beige);
+  border: 5px double var(--color-wood);
+  font-family: "Old English Text MT", serif;
+  text-align: center;
+  padding: 20px;
+  transform: rotate(-2deg);
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Scrollbar styling for that authentic 90s feel */
+::-webkit-scrollbar {
+  width: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-office-tan);
+  border: 2px inset var(--color-office-tan);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-wood);
+  border: 2px outset var(--color-wood);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #654321;
+}
