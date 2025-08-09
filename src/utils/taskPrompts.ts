@@ -145,7 +145,6 @@ export const checkTaskResponse = (
 
 export const getTaskResponseRoast = (
   task: TherapyTask,
-  response: string,
   isCompleted: boolean
 ): string => {
   if (isCompleted) {

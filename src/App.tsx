@@ -287,7 +287,6 @@ function App() {
     const isCompleted = checkTaskResponse(appState.currentTask, response);
     const roastResponse = getTaskResponseRoast(
       appState.currentTask,
-      response,
       isCompleted
     );
 
