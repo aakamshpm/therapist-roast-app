@@ -26,7 +26,7 @@ import {
 
 import Header from "./components/Header";
 import ChatWindow from "./components/ChatWindow";
-// import PaywallModal from './components/PaywallModal';
+import PaywallModal from "./components/PaywallModal";
 // import TherapyTaskModal from './components/TherapyTaskModal';
 import LoadingScreen from "./components/LoadingScreen";
 // import Footer from './components/Footer';
@@ -240,40 +240,65 @@ function App() {
     // }
   };
 
-  // const handlePaywallPayment = () => {
-  //   if (!appState.session) return;
+  const handlePaywallPayment = () => {
+    if (!appState.session) return;
 
-  //   const response = handlePaywallResponse('pay', appState.session, appState.currentPaywallPrompt!, true);
+    const response = handlePaywallResponse(
+      "pay",
+      appState.session,
+      appState.currentPaywallPrompt!,
+      true
+    );
 
-  //   const updatedSession = updateSession(appState.session, response.updateSession);
-  //   const updatedMessages = addMessage(appState.messages, response.roastResponse, 'ai', { isPaywallResponse: true });
+    const updatedSession = updateSession(
+      appState.session,
+      response.updateSession
+    );
+    const updatedMessages = addMessage(
+      appState.messages,
+      response.roastResponse,
+      "ai",
+      { isPaywallResponse: true }
+    );
 
-  //   setAppState(prev => ({
-  //     ...prev,
-  //     session: updatedSession,
-  //     messages: updatedMessages,
-  //     showPaywall: false,
-  //     currentPaywallPrompt: null,
-  //   }));
-  // };
+    setAppState((prev) => ({
+      ...prev,
+      session: updatedSession,
+      messages: updatedMessages,
+      showPaywall: false,
+      currentPaywallPrompt: null,
+    }));
+  };
 
-  // const handlePaywallConfession = (confession: string) => {
-  //   if (!appState.session || !appState.currentPaywallPrompt) return;
+  const handlePaywallConfession = (confession: string) => {
+    if (!appState.session || !appState.currentPaywallPrompt) return;
 
-  //   const response = handlePaywallResponse(confession, appState.session, appState.currentPaywallPrompt);
+    const response = handlePaywallResponse(
+      confession,
+      appState.session,
+      appState.currentPaywallPrompt
+    );
 
-  //   const updatedSession = updateSession(appState.session, response.updateSession);
-  //   let updatedMessages = addMessage(appState.messages, confession, 'user');
-  //   updatedMessages = addMessage(updatedMessages, response.roastResponse, 'ai', { isPaywallResponse: true });
+    const updatedSession = updateSession(
+      appState.session,
+      response.updateSession
+    );
+    let updatedMessages = addMessage(appState.messages, confession, "user");
+    updatedMessages = addMessage(
+      updatedMessages,
+      response.roastResponse,
+      "ai",
+      { isPaywallResponse: true }
+    );
 
-  //   setAppState(prev => ({
-  //     ...prev,
-  //     session: updatedSession,
-  //     messages: updatedMessages,
-  //     showPaywall: false,
-  //     currentPaywallPrompt: null,
-  //   }));
-  // };
+    setAppState((prev) => ({
+      ...prev,
+      session: updatedSession,
+      messages: updatedMessages,
+      showPaywall: false,
+      currentPaywallPrompt: null,
+    }));
+  };
 
   // const handleTaskComplete = (response: string) => {
   //   if (!appState.currentTask || !appState.session) return;
@@ -346,20 +371,22 @@ function App() {
         {/* <Footer /> */}
 
         {/* Modals */}
-        {/* <PaywallModal
+        <PaywallModal
           prompt={appState.currentPaywallPrompt}
           onPayment={handlePaywallPayment}
           onConfession={handlePaywallConfession}
-          onDismiss={() => setAppState(prev => ({ ...prev, showPaywall: false }))}
+          onDismiss={() =>
+            setAppState((prev) => ({ ...prev, showPaywall: false }))
+          }
           isVisible={appState.showPaywall}
         />
-
+        {/* 
         <TherapyTaskModal
           task={appState.currentTask}
           onComplete={handleTaskComplete}
           onSkip={handleTaskSkip}
           isVisible={appState.showTask}
-        /> */}
+        />  */}
       </div>
     </div>
   );
