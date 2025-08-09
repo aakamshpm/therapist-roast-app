@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-comic: "Comic Sans MS", cursive;
+  --font-comic: "Comic Sans MS";
   --font-ugly: "Times New Roman", serif;
 
   --color-wood: #8b4513;
