@@ -1,12 +1,14 @@
+// ==================== CORE DATA TYPES ====================
+
 export interface Message {
   id: string;
   content: string;
   sender: "user" | "ai";
   timestamp: Date;
-  isPaywallResponse?: boolean;
   roastTier?: "mild" | "medium" | "nuclear";
   isTask?: boolean;
   taskId?: string;
+  isPaywallResponse?: boolean;
 }
 
 export interface UserSession {
@@ -29,21 +31,6 @@ export interface UserSession {
   currentTask?: string;
 }
 
-export interface RoastResponse {
-  content: string;
-  tier: "mild" | "medium" | "nuclear";
-  shouldTriggerTask?: boolean;
-  taskType?: string;
-  isPaywallResponse?: boolean;
-}
-
-export interface PaywallPrompt {
-  type: "payment" | "confession" | "both";
-  message: string;
-  confessionPrompt?: string;
-  paymentAmount?: string;
-}
-
 export interface TherapyTask {
   id: string;
   prompt: string;
@@ -53,18 +40,23 @@ export interface TherapyTask {
   isCompleted?: boolean;
 }
 
-export interface AppState {
-  session: UserSession | null;
-  messages: Message[];
-  currentPaywallPrompt: PaywallPrompt | null;
-  currentTask: TherapyTask | null;
-  isLoading: boolean;
-  showPaywall: boolean;
-  showTask: boolean;
-  isTyping: boolean;
+export interface PaywallPrompt {
+  type: "payment" | "confession" | "both";
+  message: string;
+  confessionPrompt?: string;
+  paymentAmount?: string;
 }
 
-// Gemini API types
+// ==================== API RESPONSE TYPES ====================
+
+export interface RoastResponse {
+  content: string;
+  tier: "mild" | "medium" | "nuclear";
+  shouldTriggerTask?: boolean;
+  taskType?: string;
+  isPaywallResponse?: boolean;
+}
+
 export interface GeminiResponse {
   candidates: Array<{
     content: {
@@ -105,14 +97,39 @@ export interface GeminiRequest {
   }>;
 }
 
-// UI Component Props
+// ==================== APP STATE ====================
+
+export interface AppState {
+  session: UserSession | null;
+  messages: Message[];
+  currentPaywallPrompt: PaywallPrompt | null;
+  currentTask: TherapyTask | null;
+  isLoading: boolean;
+  showPaywall: boolean;
+  showTask: boolean;
+  isTyping: boolean;
+}
+
+// ==================== COMPONENT PROPS ====================
+
+export interface HeaderProps {
+  session: UserSession | null;
+}
+
+export interface ChatWindowProps {
+  messages: Message[];
+  onSendMessage: (message: string) => void;
+  isTyping: boolean;
+  session: UserSession | null;
+}
+
 export interface MessageBubbleProps {
   message: Message;
   isLatest: boolean;
 }
 
 export interface PaywallModalProps {
-  prompt: PaywallPrompt;
+  prompt: PaywallPrompt | null;
   onPayment: () => void;
   onConfession: (confession: string) => void;
   onDismiss: () => void;
@@ -120,7 +137,7 @@ export interface PaywallModalProps {
 }
 
 export interface TherapyTaskProps {
-  task: TherapyTask;
+  task: TherapyTask | null;
   onComplete: (response: string) => void;
   onSkip: () => void;
   isVisible: boolean;
@@ -129,4 +146,26 @@ export interface TherapyTaskProps {
 export interface LoadingScreenProps {
   message?: string;
   isVisible: boolean;
+}
+
+export interface FooterProps {
+  // Empty for now, but ready for future props
+}
+
+// ==================== UTILITY TYPES ====================
+
+export type RoastTier = "mild" | "medium" | "nuclear";
+export type MessageSender = "user" | "ai";
+export type PaywallType = "payment" | "confession" | "both";
+
+// ==================== ENVIRONMENT TYPES ====================
+
+declare global {
+  interface ImportMetaEnv {
+    readonly VITE_GEMINI_API_KEY: string;
+  }
+
+  interface ImportMeta {
+    readonly env: ImportMetaEnv;
+  }
 }

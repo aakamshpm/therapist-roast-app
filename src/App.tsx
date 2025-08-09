@@ -25,7 +25,7 @@ import {
 // import { getRandomTask, checkTaskResponse, getTaskResponseRoast } from './utils/taskPrompts';
 
 import Header from "./components/Header";
-// import ChatWindow from './components/ChatWindow';
+import ChatWindow from "./components/ChatWindow";
 // import PaywallModal from './components/PaywallModal';
 // import TherapyTaskModal from './components/TherapyTaskModal';
 import LoadingScreen from "./components/LoadingScreen";
@@ -145,112 +145,100 @@ function App() {
     }
   };
 
-  // const handleUserMessage = async (message: string) => {
-  //   if (!appState.session || appState.isLoading) return;
-
-  //   // Add user message
-  //   const updatedMessages = addMessage(appState.messages, message, 'user');
-  //   const updatedSession = updateSession(appState.session, {
-  //     messageCount: appState.session.messageCount + 1
-  //   });
-
-  //   setAppState(prev => ({
-  //     ...prev,
-  //     messages: updatedMessages,
-  //     session: updatedSession,
-  //     isTyping: true,
-  //   }));
-
-  //   // Store personal info from first few messages
-  //   if (updatedSession.messageCount <= 3) {
-  //     const personalInfo = { ...updatedSession.personalInfo };
-
-  //     if (updatedSession.messageCount === 1) {
-  //       personalInfo.name = message;
-  //     } else if (updatedSession.messageCount === 2) {
-  //       personalInfo.mainProblem = message;
-  //     } else if (updatedSession.messageCount === 3) {
-  //       personalInfo.favoriteFood = message;
-  //     }
-
-  //     const sessionWithInfo = updateSession(updatedSession, { personalInfo });
-  //     setAppState(prev => ({ ...prev, session: sessionWithInfo }));
-  //   }
-
-  //   // Check for paywall trigger
-  //   if (shouldTriggerPaywall(updatedSession.messageCount, updatedSession.hasHitPaywall)) {
-  //     setTimeout(() => {
-  //       const paywallPrompt = generatePaywallPrompt(updatedSession);
-  //       setAppState(prev => ({
-  //         ...prev,
-  //         currentPaywallPrompt: paywallPrompt,
-  //         showPaywall: true,
-  //         isTyping: false,
-  //       }));
-  //     }, 1500);
-  //     return;
-  //   }
-
-  //   // Generate AI response
-  //   try {
-  //     let question_number = 0;
-  //     if (updatedSession.messageCount <= 3) {
-  //       question_number = updatedSession.messageCount + 1;
-  //     }
-
-  //     if (question_number > 0 && question_number <= 3) {
-  //       // Still in question phase
-  //       setTimeout(async () => {
-  //         await askPersonalQuestion(question_number);
-  //       }, 2000);
-  //     } else {
-  //       // Generate roast response
-  //       const roastResponse = await geminiRoastEngine.generateRoast(
-  //         message,
-  //         updatedSession,
-  //         updatedMessages
-  //       );
-
-  //       setTimeout(() => {
-  //         const messagesWithRoast = addMessage(
-  //           updatedMessages,
-  //           roastResponse.content,
-  //           'ai',
-  //           { roastTier: roastResponse.tier }
-  //         );
-
-  //         setAppState(prev => ({
-  //           ...prev,
-  //           messages: messagesWithRoast,
-  //           isTyping: false,
-  //         }));
-
-  //         // Trigger therapy task if needed
-  //         if (roastResponse.shouldTriggerTask && roastResponse.taskType) {
-  //           setTimeout(() => {
-  //             const task = getRandomTask();
-  //             setAppState(prev => ({
-  //               ...prev,
-  //               currentTask: task,
-  //               showTask: true,
-  //             }));
-  //           }, 3000);
-  //         }
-  //       }, 2000);
-  //     }
-  //   } catch (error) {
-  //     console.error('Failed to generate response:', error);
-
-  //     setTimeout(() => {
-  //       const errorMessage = "Even my AI brain is struggling to process your existence. That's... actually impressive in the worst way possible. 🤖💥";
-  //       setAppState(prev => ({
-  //         ...prev,
-  //         messages: addMessage(updatedMessages, errorMessage, 'ai'),
-  //         isTyping: false,
-  //       }));
-  //     }, 2000);
-  //   }
-  // };
+  const handleUserMessage = async (message: string) => {
+    // if (!appState.session || appState.isLoading) return;
+    // // Add user message
+    // const updatedMessages = addMessage(appState.messages, message, 'user');
+    // const updatedSession = updateSession(appState.session, {
+    //   messageCount: appState.session.messageCount + 1
+    // });
+    // setAppState(prev => ({
+    //   ...prev,
+    //   messages: updatedMessages,
+    //   session: updatedSession,
+    //   isTyping: true,
+    // }));
+    // // Store personal info from first few messages
+    // if (updatedSession.messageCount <= 3) {
+    //   const personalInfo = { ...updatedSession.personalInfo };
+    //   if (updatedSession.messageCount === 1) {
+    //     personalInfo.name = message;
+    //   } else if (updatedSession.messageCount === 2) {
+    //     personalInfo.mainProblem = message;
+    //   } else if (updatedSession.messageCount === 3) {
+    //     personalInfo.favoriteFood = message;
+    //   }
+    //   const sessionWithInfo = updateSession(updatedSession, { personalInfo });
+    //   setAppState(prev => ({ ...prev, session: sessionWithInfo }));
+    // }
+    // // Check for paywall trigger
+    // if (shouldTriggerPaywall(updatedSession.messageCount, updatedSession.hasHitPaywall)) {
+    //   setTimeout(() => {
+    //     const paywallPrompt = generatePaywallPrompt(updatedSession);
+    //     setAppState(prev => ({
+    //       ...prev,
+    //       currentPaywallPrompt: paywallPrompt,
+    //       showPaywall: true,
+    //       isTyping: false,
+    //     }));
+    //   }, 1500);
+    //   return;
+    // }
+    // // Generate AI response
+    // try {
+    //   let question_number = 0;
+    //   if (updatedSession.messageCount <= 3) {
+    //     question_number = updatedSession.messageCount + 1;
+    //   }
+    //   if (question_number > 0 && question_number <= 3) {
+    //     // Still in question phase
+    //     setTimeout(async () => {
+    //       await askPersonalQuestion(question_number);
+    //     }, 2000);
+    //   } else {
+    //     // Generate roast response
+    //     const roastResponse = await geminiRoastEngine.generateRoast(
+    //       message,
+    //       updatedSession,
+    //       updatedMessages
+    //     );
+    //     setTimeout(() => {
+    //       const messagesWithRoast = addMessage(
+    //         updatedMessages,
+    //         roastResponse.content,
+    //         'ai',
+    //         { roastTier: roastResponse.tier }
+    //       );
+    //       setAppState(prev => ({
+    //         ...prev,
+    //         messages: messagesWithRoast,
+    //         isTyping: false,
+    //       }));
+    //       // Trigger therapy task if needed
+    //       if (roastResponse.shouldTriggerTask && roastResponse.taskType) {
+    //         setTimeout(() => {
+    //           const task = getRandomTask();
+    //           setAppState(prev => ({
+    //             ...prev,
+    //             currentTask: task,
+    //             showTask: true,
+    //           }));
+    //         }, 3000);
+    //       }
+    //     }, 2000);
+    //   }
+    // } catch (error) {
+    //   console.error('Failed to generate response:', error);
+    //   setTimeout(() => {
+    //     const errorMessage = "Even my AI brain is struggling to process your existence. That's... actually impressive in the worst way possible. 🤖💥";
+    //     setAppState(prev => ({
+    //       ...prev,
+    //       messages: addMessage(updatedMessages, errorMessage, 'ai'),
+    //       isTyping: false,
+    //     }));
+    //   }, 2000);
+    // }
+  };
 
   // const handlePaywallPayment = () => {
   //   if (!appState.session) return;
@@ -345,12 +333,12 @@ function App() {
 
         <main className="container mx-auto px-4 py-6 min-h-[calc(100vh-200px)]">
           <div className="max-w-4xl mx-auto">
-            {/* <ChatWindow 
+            <ChatWindow
               messages={appState.messages}
               onSendMessage={handleUserMessage}
               isTyping={appState.isTyping}
               session={appState.session}
-            /> */}
+            />
             <div ref={messagesEndRef} />
           </div>
         </main>
