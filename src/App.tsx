@@ -1,11 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import type {
-  AppState,
-  UserSession,
-  Message,
-  PaywallPrompt,
-  TherapyTask,
-} from "./types";
+import type { AppState } from "./types";
 import {
   createNewSession,
   loadSession,

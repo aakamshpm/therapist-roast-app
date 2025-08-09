@@ -49,15 +49,6 @@ const TherapyTaskModal: React.FC<TherapyTaskProps> = ({
 
     setIsSubmitting(true);
 
-    // Fake processing delay with random message
-    const processingMessages = [
-      "Analyzing your pathetic response...",
-      "Computing cringe levels...",
-      "Preparing brutal feedback...",
-      "Judging your life choices...",
-      "Processing disappointment...",
-    ];
-
     setTimeout(() => {
       setIsSubmitting(false);
       onComplete(taskResponse.trim());
