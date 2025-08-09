@@ -78,21 +78,22 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       {/* Chat Messages Container */}
       <div
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4 bg-beige/20 ugly-border"
+        className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-4 bg-beige/20 ugly-border"
         style={{
           scrollBehavior: "smooth",
-          minHeight: "400px",
+          minHeight: "300px",
+          maxHeight: "calc(100vh - 300px)",
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000' fill-opacity='0.03'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20s-20-8.954-20-20 8.954-20 20-20 20 8.954 20 20z'/%3E%3C/g%3E%3C/svg%3E")`,
         }}
       >
         {/* Welcome Message for Empty Chat */}
         {messages.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">🎭</div>
-            <h2 className="font-comic text-2xl font-bold text-wood mb-2">
+          <div className="text-center py-8 sm:py-12 px-4">
+            <div className="text-4xl sm:text-6xl mb-4">🎭</div>
+            <h2 className="font-comic text-xl sm:text-2xl font-bold text-wood mb-2">
               Welcome to Your Personal Hell!
             </h2>
-            <p className="font-ugly text-wood/80 max-w-md mx-auto">
+            <p className="font-ugly text-sm sm:text-base text-wood/80 max-w-md mx-auto">
               I'm !THERAPIST, your definitely-not-licensed AI therapist. I'm
               here to make your problems worse in the most entertaining way
               possible!
@@ -148,11 +149,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       </div>
 
       {/* Input Section */}
-      <div className="p-4 wood-panel ugly-border border-t-4 flex-shrink-0">
+      <div className="p-2 sm:p-4 wood-panel ugly-border border-t-4 flex-shrink-0">
         {/* Session Status Bar */}
         {session && (
-          <div className="mb-3 flex justify-between items-center text-xs font-comic">
-            <div className="flex space-x-4">
+          <div className="mb-3 flex flex-col sm:flex-row sm:justify-between sm:items-center text-xs font-comic space-y-2 sm:space-y-0">
+            <div className="flex flex-wrap gap-2 sm:gap-4">
               <span className="text-wood/80">
                 Messages: {session.messageCount}
               </span>
@@ -178,7 +179,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         )}
 
         {/* Input Form */}
-        <form onSubmit={handleSubmit} className="flex space-x-2">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2"
+        >
           <div className="flex-1 relative">
             <input
               ref={inputRef}
@@ -188,7 +192,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
               onKeyDown={handleKeyPress}
               disabled={isInputDisabled}
               placeholder={getPlaceholderText()}
-              className={`w-full px-4 py-3 font-comic text-wood bg-hospital-green ugly-border 
+              className={`w-full px-3 sm:px-4 py-2 sm:py-3 font-comic text-sm sm:text-base text-wood bg-hospital-green ugly-border 
                 placeholder-wood/60 focus:outline-none focus:ring-2 focus:ring-hot-pink
                 disabled:opacity-50 disabled:cursor-not-allowed
                 ${isInputDisabled ? "animate-pulse" : ""}
@@ -206,7 +210,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
           <button
             type="submit"
             disabled={!inputMessage.trim() || isInputDisabled}
-            className={`retro-button px-6 py-3 font-comic font-bold 
+            className={`retro-button px-4 sm:px-6 py-2 sm:py-3 font-comic font-bold text-sm sm:text-base w-full sm:w-auto
               disabled:opacity-50 disabled:cursor-not-allowed
               ${
                 !inputMessage.trim() || isInputDisabled
@@ -215,7 +219,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
               }
             `}
           >
-            <span className="flex items-center space-x-2">
+            <span className="flex items-center justify-center space-x-1 sm:space-x-2">
               <span>{getInputIcon()}</span>
               <span>{isTyping ? "WAIT" : "ROAST"}</span>
             </span>
@@ -223,18 +227,18 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         </form>
 
         {/* Quick Actions */}
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-3 flex flex-wrap gap-1 sm:gap-2">
           {!isInputDisabled && inputMessage.length === 0 && (
             <>
               <button
                 onClick={() => setInputMessage("I need help with my life")}
-                className="text-xs px-3 py-1 bg-vomit-green ugly-border font-comic text-wood hover:bg-vomit-green/80"
+                className="text-xs px-2 sm:px-3 py-1 bg-vomit-green ugly-border font-comic text-wood hover:bg-vomit-green/80 flex-1 sm:flex-none min-w-0"
               >
                 💀 Help me
               </button>
               <button
                 onClick={() => setInputMessage("I made a terrible decision")}
-                className="text-xs px-3 py-1 bg-hospital-green ugly-border font-comic text-wood hover:bg-hospital-green/80"
+                className="text-xs px-2 sm:px-3 py-1 bg-hospital-green ugly-border font-comic text-wood hover:bg-hospital-green/80 flex-1 sm:flex-none min-w-0"
               >
                 🤦‍♂️ Bad choice
               </button>
@@ -242,13 +246,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                 onClick={() =>
                   setInputMessage("I'm having relationship problems")
                 }
-                className="text-xs px-3 py-1 bg-puke-yellow ugly-border font-comic text-wood hover:bg-puke-yellow/80"
+                className="text-xs px-2 sm:px-3 py-1 bg-puke-yellow ugly-border font-comic text-wood hover:bg-puke-yellow/80 flex-1 sm:flex-none min-w-0"
               >
                 💔 Love issues
               </button>
               <button
                 onClick={() => setInputMessage("I hate my job")}
-                className="text-xs px-3 py-1 bg-beige ugly-border font-comic text-wood hover:bg-beige/80"
+                className="text-xs px-2 sm:px-3 py-1 bg-beige ugly-border font-comic text-wood hover:bg-beige/80 flex-1 sm:flex-none min-w-0"
               >
                 😤 Work sucks
               </button>
@@ -257,7 +261,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         </div>
 
         {/* Fake Disclaimer */}
-        <div className="mt-3 text-xs text-wood/40 font-ugly text-center">
+        <div className="mt-3 text-xs text-wood/40 font-ugly text-center px-2">
           ⚠️ Warning: This AI will hurt your feelings ⚠️ | Not actual therapy |
           Entertainment only
         </div>

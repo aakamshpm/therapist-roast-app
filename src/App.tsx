@@ -368,8 +368,8 @@ function App() {
       <div className="min-h-screen wood-panel flex flex-col">
         <Header session={appState.session} />
 
-        <main className="flex-1 container mx-auto px-4 py-6 flex flex-col">
-          <div className="mx-auto w-[1000px] flex-1 flex flex-col">
+        <main className="flex-1 container mx-auto px-4 py-6 flex flex-col max-w-4xl">
+          <div className="flex-1 flex flex-col w-full">
             <ChatWindow
               messages={appState.messages}
               onSendMessage={handleUserMessage}
