@@ -323,6 +323,31 @@ function App() {
     }));
   };
 
+  const handlePaywallRefusal = () => {
+    if (!appState.session) return;
+
+    const response = handlePaywallResponse("refuse");
+
+    const updatedSession = updateSession(
+      appState.session,
+      response.updateSession
+    );
+    const updatedMessages = addMessage(
+      appState.messages,
+      response.roastResponse,
+      "ai",
+      { isPaywallResponse: true }
+    );
+
+    setAppState((prev) => ({
+      ...prev,
+      session: updatedSession,
+      messages: updatedMessages,
+      showPaywall: false,
+      currentPaywallPrompt: null,
+    }));
+  };
+
   // const scrollToBottom = () => {
   //   // messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   // };
@@ -371,9 +396,7 @@ function App() {
           prompt={appState.currentPaywallPrompt}
           onPayment={handlePaywallPayment}
           onConfession={handlePaywallConfession}
-          onDismiss={() =>
-            setAppState((prev) => ({ ...prev, showPaywall: false }))
-          }
+          onDismiss={handlePaywallRefusal}
           isVisible={appState.showPaywall}
         />
 
