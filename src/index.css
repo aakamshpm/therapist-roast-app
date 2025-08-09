@@ -165,3 +165,17 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #654321;
 }
+
+@keyframes scroll {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Update the animation utilities */
+.animate-scroll {
+  animation: scroll 20s linear infinite;
+}
