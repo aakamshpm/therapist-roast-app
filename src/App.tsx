@@ -27,7 +27,7 @@ import {
 import Header from "./components/Header";
 import ChatWindow from "./components/ChatWindow";
 import PaywallModal from "./components/PaywallModal";
-// import TherapyTaskModal from './components/TherapyTaskModal';
+import TherapyTaskModal from "./components/TherapyTaskModal";
 import LoadingScreen from "./components/LoadingScreen";
 // import Footer from './components/Footer';
 
@@ -300,47 +300,43 @@ function App() {
     }));
   };
 
-  // const handleTaskComplete = (response: string) => {
-  //   if (!appState.currentTask || !appState.session) return;
+  const handleTaskComplete = (response: string) => {
+    // if (!appState.currentTask || !appState.session) return;
+    // const isCompleted = checkTaskResponse(appState.currentTask, response);
+    // const roastResponse = getTaskResponseRoast(appState.currentTask, response, isCompleted);
+    // let updatedMessages = addMessage(appState.messages, response, 'user');
+    // updatedMessages = addMessage(updatedMessages, roastResponse, 'ai');
+    // const completedTasks = isCompleted
+    //   ? [...appState.session.completedTasks, appState.currentTask.id]
+    //   : appState.session.completedTasks;
+    // const updatedSession = updateSession(appState.session, { completedTasks });
+    // setAppState(prev => ({
+    //   ...prev,
+    //   session: updatedSession,
+    //   messages: updatedMessages,
+    //   showTask: false,
+    //   currentTask: null,
+    // }));
+  };
 
-  //   const isCompleted = checkTaskResponse(appState.currentTask, response);
-  //   const roastResponse = getTaskResponseRoast(appState.currentTask, response, isCompleted);
+  const handleTaskSkip = () => {
+    if (!appState.currentTask || !appState.session) return;
 
-  //   let updatedMessages = addMessage(appState.messages, response, 'user');
-  //   updatedMessages = addMessage(updatedMessages, roastResponse, 'ai');
+    const skipRoast =
+      "Can't even complete a simple task? This explains SO much about your life. Moving on... 🙄";
+    const updatedMessages = addMessage(appState.messages, skipRoast, "ai");
 
-  //   const completedTasks = isCompleted
-  //     ? [...appState.session.completedTasks, appState.currentTask.id]
-  //     : appState.session.completedTasks;
+    setAppState((prev) => ({
+      ...prev,
+      messages: updatedMessages,
+      showTask: false,
+      currentTask: null,
+    }));
+  };
 
-  //   const updatedSession = updateSession(appState.session, { completedTasks });
-
-  //   setAppState(prev => ({
-  //     ...prev,
-  //     session: updatedSession,
-  //     messages: updatedMessages,
-  //     showTask: false,
-  //     currentTask: null,
-  //   }));
-  // };
-
-  // const handleTaskSkip = () => {
-  //   if (!appState.currentTask || !appState.session) return;
-
-  //   const skipRoast = "Can't even complete a simple task? This explains SO much about your life. Moving on... 🙄";
-  //   const updatedMessages = addMessage(appState.messages, skipRoast, 'ai');
-
-  //   setAppState(prev => ({
-  //     ...prev,
-  //     messages: updatedMessages,
-  //     showTask: false,
-  //     currentTask: null,
-  //   }));
-  // };
-
-  // const scrollToBottom = () => {
-  //   messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  // };
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   if (appState.isLoading) {
     return (
@@ -380,13 +376,13 @@ function App() {
           }
           isVisible={appState.showPaywall}
         />
-        {/* 
+
         <TherapyTaskModal
           task={appState.currentTask}
           onComplete={handleTaskComplete}
           onSkip={handleTaskSkip}
           isVisible={appState.showTask}
-        />  */}
+        />
       </div>
     </div>
   );
