@@ -1,69 +1,112 @@
-# React + TypeScript + Vite
+# !THERAPIST™ 🎭
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Basic Details
 
-Currently, two official plugins are available:
+### Name: Aakamsh P M
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Project Description
 
-## Expanding the ESLint configuration
+!THERAPIST™ is a satirical AI-powered "therapy" chat app that delivers brutal honesty, sarcasm, and emotional damage instead of actual help. It’s an interactive web experience where users chat with a fake AI therapist that roasts them, triggers fake paywalls, and assigns pointless therapy tasks—purely for entertainment!
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### The Problem (that doesn't exist)
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+People have too much self-esteem and not enough exposure to 90s website nostalgia. The world is lacking a platform where getting roasted by an AI is the goal, not the side effect.
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### The Solution (that nobody asked for)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+An intentionally ugly, retro-styled web app where users can confess their life problems only to receive savage burns, fake paywall popups, and "therapy" tasks that are either impossible or just deeply embarrassing. All powered by Gemini AI and 100% guaranteed to hurt your feelings (not heal them).
+
+---
+
+## Technical Details
+
+### Technologies/Components Used
+
+**For Software:**
+
+- **Languages:** TypeScript, JavaScript, CSS
+- **Frameworks:** React, Vite
+- **Libraries:** Tailwind CSS, Google Gemini API
+- **Tools:** localStorage, Custom UI components, SVG backgrounds, Fake Paywall Engine™
+
+**For Hardware:**
+
+- Runs on any device with a web browser and enough courage.
+
+---
+
+### Implementation
+
+**For Software:**
+
+#### Installation
+
+```bash
+git clone https://github.com/aakamshpm/therapist-app.git
+cd therapist-app
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+#### Run
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+**Note:** You’ll need a Google Gemini API key. Set it up in your `.env` as `VITE_GEMINI_API_KEY=YOUR_KEY_HERE`.
+
+---
+
+### Project Documentation
+
+#### Screenshots
+
+![Home Screen](screenshots/home.png)
+_Landing page: Behold the glorious 90s UI and the start of your emotional destruction._
+
+![Roast in Action](screenshots/roast.png)
+_AI therapist delivering a signature roast and follow-up question after your confession._
+
+![Paywall Modal](screenshots/paywall.png)
+_The infamous fake paywall—choose to pay (with imaginary money) or confess your deepest shame!_
+
+#### Diagrams
+
+![App Workflow](screenshots/workflow.png)
+_Workflow: User sends message → AI roasts you → Fake paywall/trivial therapy task → Repeat until ego is destroyed._
+
+---
+
+**For Hardware:**  
+N/A (unless you count your broken spirit)
+
+---
+
+### Project Demo
+
+#### Video
+
+[![Watch the Demo](https://img.youtube.com/vi/YOUR_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE)
+_Demo: See !THERAPIST™ in action, from onboarding to nuclear-level roasting._
+
+#### Additional Demos
+
+- [Live site (if deployed)](https://therapist.aakamshpm.com)
+
+---
+
+## Team Contributions
+
+- **Aakamsh P M:**
+  - Concept & design
+  - All code: frontend, fake backend, paywall logic
+  - Gemini prompt engineering
+  - UI/UX (intentionally ugly)
+  - Testing (emotional stability not guaranteed)
+
+---
+
+Made with ❤️ and zero empathy at TinkerHub Useless Projects
+
+![Static Badge](https://img.shields.io/badge/TinkerHub-24?color=%23000000&link=https%3A%2F%2Fwww.tinkerhub.org%2F)
+![Static Badge](https://img.shields.io/badge/UselessProjects--25-25?link=https%3A%2F%2Fwww.tinkerhub.org%2Fevents%2FQ2Q1TQKX6Q%2FUseless%2520Projects)
