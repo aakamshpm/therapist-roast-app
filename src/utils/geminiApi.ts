@@ -1,12 +1,21 @@
 import type { RoastResponse, UserSession, Message } from "../types";
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const GEMINI_API_URL = `${
-  import.meta.env.VITE_GEMINI_API_URL
-}?key=${GEMINI_API_KEY}`;
+const GEMINI_BASE_URL = import.meta.env.VITE_GEMINI_API_URL;
+
+if (!GEMINI_API_KEY) {
+  console.error("VITE_GEMINI_API_KEY is not set in environment variables");
+}
+
+if (!GEMINI_BASE_URL) {
+  console.error("VITE_GEMINI_API_URL is not set in environment variables");
+}
+
+const GEMINI_API_URL = `${GEMINI_BASE_URL}?key=${GEMINI_API_KEY}`;
 
 interface GeminiRequest {
   contents: Array<{
+    role: string;
     parts: Array<{
       text: string;
     }>;
@@ -101,17 +110,15 @@ Be creative, mean (but funny), and stay in character as a fake therapist who's t
 
   private buildConversationHistory(
     messages: Message[]
-  ): Array<{ parts: Array<{ text: string }> }> {
+  ): Array<{ role: string; parts: Array<{ text: string }> }> {
     // Only include last 5 messages to keep context manageable
     const recentMessages = messages.slice(-5);
 
     return recentMessages.map((msg) => ({
+      role: msg.sender === "user" ? "user" : "model",
       parts: [
         {
-          text:
-            msg.sender === "user"
-              ? `User: ${msg.content}`
-              : `!THERAPIST: ${msg.content}`,
+          text: msg.content,
         },
       ],
     }));
@@ -123,6 +130,13 @@ Be creative, mean (but funny), and stay in character as a fake therapist who's t
     conversationHistory: Message[]
   ): Promise<RoastResponse> {
     try {
+      // Check if environment variables are properly set
+      if (!GEMINI_API_KEY || !GEMINI_BASE_URL) {
+        throw new Error(
+          "Gemini API configuration missing. Please set VITE_GEMINI_API_KEY and VITE_GEMINI_API_URL in your .env file."
+        );
+      }
+
       const systemPrompt = this.buildSystemPrompt(
         session,
         session.messageCount
@@ -133,11 +147,13 @@ Be creative, mean (but funny), and stay in character as a fake therapist who's t
       const requestBody: GeminiRequest = {
         contents: [
           {
+            role: "user",
             parts: [{ text: systemPrompt }],
           },
           ...conversationContext,
           {
-            parts: [{ text: `User: ${userMessage}` }],
+            role: "user",
+            parts: [{ text: userMessage }],
           },
         ],
         generationConfig: {
@@ -259,13 +275,19 @@ Be creative, mean (but funny), and stay in character as a fake therapist who's t
 
     // For additional questions, use Gemini
     try {
+      // Check if environment variables are properly set
+      if (!GEMINI_API_KEY || !GEMINI_BASE_URL) {
+        console.warn("Gemini API not configured, using fallback question");
+        return prompts[0]; // Return first prompt as fallback
+      }
+
       const systemPrompt = `You are !THERAPIST asking a personal intake question. Be sarcastic but not roasting yet. Ask something personal that you can use to roast them later. Keep it under 50 words. Question ${questionNumber}.`;
 
       const response = await fetch(GEMINI_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: systemPrompt }] }],
+          contents: [{ role: "user", parts: [{ text: systemPrompt }] }],
           generationConfig: { temperature: 0.8, maxOutputTokens: 100 },
         }),
       });

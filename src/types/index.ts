@@ -34,7 +34,7 @@ export interface UserSession {
 export interface TherapyTask {
   id: string;
   prompt: string;
-  expectedResponse?: string;
+  expectedResponse?: string | null;
   punishmentRoast: string;
   rewardRoast?: string;
   isCompleted?: boolean;
