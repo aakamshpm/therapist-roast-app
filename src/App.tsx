@@ -169,7 +169,7 @@ function App() {
       )
     ) {
       setTimeout(() => {
-        const paywallPrompt = generatePaywallPrompt(updatedSession);
+        const paywallPrompt = generatePaywallPrompt();
         setAppState((prev) => ({
           ...prev,
           currentPaywallPrompt: paywallPrompt,
@@ -233,12 +233,7 @@ function App() {
   const handlePaywallPayment = () => {
     if (!appState.session) return;
 
-    const response = handlePaywallResponse(
-      "pay",
-      appState.session,
-      appState.currentPaywallPrompt!,
-      true
-    );
+    const response = handlePaywallResponse("pay", true);
 
     const updatedSession = updateSession(
       appState.session,
@@ -263,11 +258,7 @@ function App() {
   const handlePaywallConfession = (confession: string) => {
     if (!appState.session || !appState.currentPaywallPrompt) return;
 
-    const response = handlePaywallResponse(
-      confession,
-      appState.session,
-      appState.currentPaywallPrompt
-    );
+    const response = handlePaywallResponse(confession);
 
     const updatedSession = updateSession(
       appState.session,

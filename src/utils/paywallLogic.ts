@@ -35,7 +35,7 @@ const paymentRoasts = [
   "I can't decide what's worse - that you tried to pay, or that you thought ₹999.99 was enough for this premium emotional carnage. Honey, this level of therapy costs WAY more than your self-worth. But I'll give you a discount for being entertainingly pathetic! 🎯💸",
 ];
 
-export const generatePaywallPrompt = (session: UserSession): PaywallPrompt => {
+export const generatePaywallPrompt = (): PaywallPrompt => {
   const randomMessage =
     paywallMessages[Math.floor(Math.random() * paywallMessages.length)];
   const randomConfession =
@@ -51,8 +51,6 @@ export const generatePaywallPrompt = (session: UserSession): PaywallPrompt => {
 
 export const handlePaywallResponse = (
   response: string,
-  session: UserSession,
-  prompt: PaywallPrompt,
   isPaymentAttempt: boolean = false
 ): {
   continueSession: boolean;
