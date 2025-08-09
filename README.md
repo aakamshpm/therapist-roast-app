@@ -42,7 +42,7 @@ An intentionally ugly, retro-styled web app where users can confess their life p
 #### Installation
 
 ```bash
-git clone https://github.com/aakamshpm/therapist-app.git
+git clone https://github.com/aakamshpm/therapist-roast-app.git
 cd therapist-app
 npm install
 ```
@@ -72,7 +72,6 @@ _The infamous fake paywall—choose to pay (with imaginary money) or confess you
 
 #### Diagrams
 
-![App Workflow](screenshots/workflow.png)
 _Workflow: User sends message → AI roasts you → Fake paywall/trivial therapy task → Repeat until ego is destroyed._
 
 ---
@@ -84,14 +83,7 @@ N/A (unless you count your broken spirit)
 
 ### Project Demo
 
-#### Video
-
-[![Watch the Demo](https://img.youtube.com/vi/YOUR_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE)
-_Demo: See !THERAPIST™ in action, from onboarding to nuclear-level roasting._
-
-#### Additional Demos
-
-- [Live site (if deployed)](https://therapist.aakamshpm.com)
+- [Live site](https://therapist-virid-zeta.vercel.app/)
 
 ---
 
