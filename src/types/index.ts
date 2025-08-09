@@ -3,6 +3,7 @@ export interface Message {
   content: string;
   sender: "user" | "ai";
   timestamp: Date;
+  isPaywallResponse?: boolean;
   roastTier?: "mild" | "medium" | "nuclear";
   isTask?: boolean;
   taskId?: string;
