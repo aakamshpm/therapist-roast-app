@@ -46,11 +46,19 @@ function App() {
     isTyping: false,
   });
 
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Initialize app on mount
+  // Initialize app on mount with initial loading
   useEffect(() => {
-    initializeApp();
+    // Show loader for 2 seconds before initializing
+    const timer = setTimeout(() => {
+      setIsInitialLoading(false);
+      initializeApp();
+    }, 2000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const initializeApp = async () => {
@@ -335,6 +343,17 @@ function App() {
   //   // messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   // };
 
+  // Show initial loading screen
+  if (isInitialLoading) {
+    return (
+      <LoadingScreen
+        message="Initializing emotional destruction engine..."
+        isVisible={true}
+      />
+    );
+  }
+
+  // Show regular loading screen
   if (appState.isLoading) {
     return (
       <LoadingScreen

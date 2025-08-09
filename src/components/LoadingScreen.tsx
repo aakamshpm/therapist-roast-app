@@ -80,7 +80,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
         </h1>
 
         <p className="font-ugly text-beige/80 mb-6">
-          Definitely Not Licensed Since 2024
+          Definitely Not Licensed Since 2025
         </p>
 
         {/* Loading Message */}

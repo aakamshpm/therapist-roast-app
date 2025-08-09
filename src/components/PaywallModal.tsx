@@ -62,17 +62,8 @@ const PaywallModal: React.FC<PaywallModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-      <div className="wood-panel ugly-border max-w-md w-full mx-4 p-6 relative animate-fade-in-up">
-        {/* Close Button */}
-        <button
-          onClick={onDismiss}
-          className="absolute top-2 right-2 text-2xl text-beige hover:text-toxic-orange transition-colors"
-          aria-label="Close"
-        >
-          ❌
-        </button>
-
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+      <div className="wood-panel ugly-border max-w-md w-full max-h-[90vh] overflow-y-auto p-6 relative animate-fade-in-up">
         {/* Header */}
         <div className="text-center mb-6">
           <div className="text-4xl mb-2 animate-bounce-annoying">🚨</div>

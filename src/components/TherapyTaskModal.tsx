@@ -90,11 +90,11 @@ const TherapyTaskModal: React.FC<TherapyTaskProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-      <div className="wood-panel ugly-border max-w-lg w-full mx-4 p-6 relative animate-fade-in-up">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+      <div className="wood-panel ugly-border max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 relative animate-fade-in-up">
         {/* Timer Bar */}
         {showTimer && (
-          <div className="absolute top-0 left-0 right-0 h-2 bg-wood/30 overflow-hidden">
+          <div className="sticky top-0 left-0 right-0 h-2 bg-wood/30 overflow-hidden z-10 -mx-6 -mt-6 mb-4">
             <div
               className="h-full bg-toxic-orange transition-all duration-1000 ease-linear"
               style={{ width: `${(timeLeft / 30) * 100}%` }}
