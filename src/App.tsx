@@ -29,7 +29,7 @@ import ChatWindow from "./components/ChatWindow";
 import PaywallModal from "./components/PaywallModal";
 import TherapyTaskModal from "./components/TherapyTaskModal";
 import LoadingScreen from "./components/LoadingScreen";
-// import Footer from './components/Footer';
+import Footer from "./components/Footer";
 
 function App() {
   const [appState, setAppState] = useState<AppState>({
