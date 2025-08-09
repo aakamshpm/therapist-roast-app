@@ -43,7 +43,7 @@ An intentionally ugly, retro-styled web app where users can confess their life p
 
 ```bash
 git clone https://github.com/aakamshpm/therapist-roast-app.git
-cd therapist-app
+cd therapist-roast-app
 npm install
 ```
 
