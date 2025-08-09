@@ -1,149 +1,146 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { LoadingScreenProps } from "../types";
 
 const LoadingScreen: React.FC<LoadingScreenProps> = ({
-  message = "Loading...",
+  message,
   isVisible,
 }) => {
+  const [currentMessage, setCurrentMessage] = useState(message || "Loading...");
   const [progress, setProgress] = useState(0);
-  const [currentMessage, setCurrentMessage] = useState(message);
-  const [dots, setDots] = useState("");
+  const [currentTip, setCurrentTip] = useState(0);
 
   const loadingMessages = [
-    "Analyzing your life choices...",
-    "Computing level of desperation...",
-    "Loading roasting algorithms...",
-    "Calibrating sarcasm levels...",
-    "Preparing emotional damage...",
-    "Initializing brutal honesty mode...",
-    "Buffering your inevitable breakdown...",
-    "Loading therapy.exe... ERROR 404: Help not found",
-    "Scanning for remaining self-esteem...",
-    "Warming up the insult generator...",
+    "Initializing emotional destruction engine...",
+    "Loading sarcasm modules...",
+    "Calibrating insult generators...",
+    "Preparing your personal hell...",
+    "Warming up the roast engine...",
+    "Disabling empathy protocols...",
+    "Loading your worst memories...",
+    "Sharpening digital wit...",
+    "Preparing premium cringe content...",
+    "Charging emotional damage cannons...",
   ];
 
-  const progressMessages = [
-    "Please wait while we destroy your confidence...",
-    "This is taking longer than your last relationship...",
-    "Still loading... unlike your life, this actually works...",
-    "Hang tight! This is more reliable than your coping mechanisms...",
-    "Loading... At least SOMETHING in your life is making progress...",
+  const loadingTips = [
+    "💡 TIP: This isn't real therapy, obviously",
+    "💡 TIP: Your feelings WILL be hurt",
+    "💡 TIP: We accept fake payments only",
+    "💡 TIP: Confessions unlock premium roasting",
+    "💡 TIP: The AI has no chill whatsoever",
+    "💡 TIP: Your problems will definitely get worse",
+    "💡 TIP: This is satire, not actual help",
+    "💡 TIP: Emotional damage is the primary service",
   ];
 
   useEffect(() => {
-    if (!isVisible) {
-      setProgress(0);
-      return;
-    }
+    if (!isVisible) return;
 
-    // Animate progress bar (but make it go backwards sometimes for the lols)
+    // Progress bar animation
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
-        // Sometimes go backwards because why not
-        if (Math.random() < 0.1) {
-          return Math.max(0, prev - Math.random() * 20);
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
         }
-
-        const increment = Math.random() * 15;
-        const newProgress = prev + increment;
-
-        // Don't let it complete (stay under 95%)
-        return Math.min(95, newProgress);
+        return prev + Math.random() * 15;
       });
-    }, 300);
+    }, 200);
 
-    // Change loading message periodically
+    // Rotate loading messages
     const messageInterval = setInterval(() => {
-      if (Math.random() < 0.7) {
-        const randomMessage =
-          loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
-        setCurrentMessage(randomMessage);
-      } else {
-        const randomProgress =
-          progressMessages[Math.floor(Math.random() * progressMessages.length)];
-        setCurrentMessage(randomProgress);
-      }
-    }, 2000);
+      setCurrentMessage(
+        loadingMessages[Math.floor(Math.random() * loadingMessages.length)]
+      );
+    }, 800);
 
-    // Animate dots
-    const dotsInterval = setInterval(() => {
-      setDots((prev) => {
-        if (prev === "...") return "";
-        return prev + ".";
-      });
-    }, 500);
+    // Rotate tips
+    const tipInterval = setInterval(() => {
+      setCurrentTip((prev) => (prev + 1) % loadingTips.length);
+    }, 2000);
 
     return () => {
       clearInterval(progressInterval);
       clearInterval(messageInterval);
-      clearInterval(dotsInterval);
+      clearInterval(tipInterval);
     };
   }, [isVisible]);
 
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-wood bg-opacity-95">
-      <div className="wood-panel ugly-border p-8 max-w-md w-full mx-4 text-center">
-        {/* Retro Computer Icon */}
-        <div className="mb-6">
-          <div className="text-6xl mb-2">💻</div>
-          <div className="font-comic text-lg font-bold text-beige">
-            !THERAPIST LOADING SYSTEM
-          </div>
-          <div className="font-ugly text-xs text-beige/80">
-            Version 1.0 - Now with 50% more emotional damage!
-          </div>
-        </div>
+    <div className="fixed inset-0 z-50 bg-gradient-to-br from-hot-pink via-ugly-teal to-puke-yellow flex items-center justify-center">
+      <div className="wood-panel ugly-border max-w-lg w-full mx-4 p-8 text-center">
+        {/* Main Logo/Icon */}
+        <div className="text-8xl mb-6 animate-bounce-slow">🎭</div>
 
-        {/* Progress Bar Container */}
-        <div className="mb-6">
-          <div className="bg-hospital-green ugly-border h-8 relative overflow-hidden">
-            {/* Actual Progress Bar */}
-            <div
-              className="fake-loading h-full transition-all duration-300 ease-out"
-              style={{ width: `${progress}%` }}
-            />
+        {/* Title */}
+        <h1 className="font-comic text-3xl font-bold text-beige mb-2">
+          !THERAPIST™
+        </h1>
 
-            {/* Progress Text Overlay */}
-            <div className="absolute inset-0 flex items-center justify-center font-comic font-bold text-wood text-sm">
-              {Math.round(progress)}% Complete
-            </div>
-          </div>
-
-          {/* Fake Memory Usage */}
-          <div className="mt-2 text-xs font-ugly text-beige/80">
-            Memory Usage: {Math.round(progress * 1.2)}MB / Your Self-Worth: 0MB
-          </div>
-        </div>
+        <p className="font-ugly text-beige/80 mb-6">
+          Definitely Not Licensed Since 2024
+        </p>
 
         {/* Loading Message */}
-        <div className="mb-4">
-          <div className="font-comic text-beige font-bold">
+        <div className="bg-beige/90 ugly-border p-4 mb-6">
+          <p className="font-comic text-wood font-bold animate-pulse">
             {currentMessage}
-            {dots}
+          </p>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="mb-6">
+          <div className="bg-wood/30 ugly-border h-6 overflow-hidden">
+            <div
+              className="h-full bg-toxic-orange transition-all duration-300 ease-out flex items-center justify-center"
+              style={{ width: `${Math.min(progress, 100)}%` }}
+            >
+              <span className="text-xs font-comic font-bold text-wood">
+                {Math.floor(Math.min(progress, 100))}%
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Spinning Loader */}
-        <div className="mb-4">
-          <div className="text-4xl animate-spin-wrong inline-block">🎭</div>
+        {/* Rotating Tips */}
+        <div className="bg-vomit-green/20 ugly-border p-3 mb-4">
+          <p className="text-xs font-ugly text-wood animate-fade-in">
+            {loadingTips[currentTip]}
+          </p>
         </div>
 
-        {/* Fake System Messages */}
-        <div className="bg-black/50 p-3 text-left font-mono text-xs text-hospital-green max-h-20 overflow-hidden">
-          <div>Loading roast_engine.dll... OK</div>
-          <div>Loading sarcasm_module.exe... OK</div>
-          <div>Loading empathy_simulator.dll... FAILED</div>
-          <div>Loading brutal_honesty.sys... OK</div>
-          <div>Checking for feelings... NONE FOUND</div>
-          <div>Initializing emotional_damage.exe...</div>
-          <div className="blink">█</div>
+        {/* Fake System Status */}
+        <div className="grid grid-cols-2 gap-2 text-xs font-ugly">
+          <div className="bg-hospital-green/30 ugly-border p-2">
+            <div className="text-wood/80">Roast Engine:</div>
+            <div className="text-wood font-bold">ONLINE ✓</div>
+          </div>
+          <div className="bg-hot-pink/30 ugly-border p-2">
+            <div className="text-wood/80">Empathy Module:</div>
+            <div className="text-wood font-bold">OFFLINE ✗</div>
+          </div>
+          <div className="bg-toxic-orange/30 ugly-border p-2">
+            <div className="text-wood/80">Sarcasm Level:</div>
+            <div className="text-wood font-bold">MAXIMUM</div>
+          </div>
+          <div className="bg-beige/30 ugly-border p-2">
+            <div className="text-wood/80">Your Dignity:</div>
+            <div className="text-wood font-bold">LOADING...</div>
+          </div>
         </div>
 
-        {/* Warning Messages */}
-        <div className="mt-4 text-xs font-comic text-toxic-orange">
-          ⚠️ Warning: May cause irreversible damage to ego ⚠️
+        {/* Disclaimer */}
+        <div className="mt-6 text-xs text-beige/60 font-ugly">
+          ⚠️ Warning: Feelings will be hurt ⚠️
+          <br />
+          Not actual therapy • Entertainment only
+        </div>
+
+        {/* Loading Spinner */}
+        <div className="mt-4 flex justify-center">
+          <div className="animate-spin text-2xl">🎪</div>
         </div>
       </div>
     </div>

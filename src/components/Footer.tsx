@@ -41,7 +41,7 @@ const Footer: React.FC<FooterProps> = () => {
   };
 
   return (
-    <footer className="wood-panel ugly-border border-t-4 mt-auto">
+    <footer className="wood-panel ugly-border border-t-4 mt-32">
       <div className="container mx-auto px-4 py-6">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
@@ -194,7 +194,10 @@ const Footer: React.FC<FooterProps> = () => {
               </div>
             </div>
             <div className="text-center mt-4 text-xs text-beige/60">
-              Made with 💔 and zero empathy by aakamshpm
+              Made with 💔 and zero empathy by{" "}
+              <a target="_blank" href="https://github.com/aakamshpm">
+                aakamshpm
+              </a>
             </div>
           </div>
         )}

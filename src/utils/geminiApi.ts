@@ -1,188 +1,67 @@
-import type { RoastResponse, UserSession, Message } from "../types";
+import type {
+  UserSession,
+  Message,
+  RoastResponse,
+  GeminiRequest,
+  GeminiResponse,
+} from "../types";
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const GEMINI_BASE_URL = import.meta.env.VITE_GEMINI_API_URL;
+class GeminiRoastEngine {
+  private apiKey: string;
+  private baseUrl: string;
 
-if (!GEMINI_API_KEY) {
-  console.error("VITE_GEMINI_API_KEY is not set in environment variables");
-}
+  constructor() {
+    this.apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    this.baseUrl = import.meta.env.VITE_GEMINI_API_URL;
 
-if (!GEMINI_BASE_URL) {
-  console.error("VITE_GEMINI_API_URL is not set in environment variables");
-}
-
-const GEMINI_API_URL = `${GEMINI_BASE_URL}?key=${GEMINI_API_KEY}`;
-
-interface GeminiRequest {
-  contents: Array<{
-    role: string;
-    parts: Array<{
-      text: string;
-    }>;
-  }>;
-  generationConfig: {
-    temperature: number;
-    topK: number;
-    topP: number;
-    maxOutputTokens: number;
-  };
-  safetySettings: Array<{
-    category: string;
-    threshold: string;
-  }>;
-}
-
-export class GeminiRoastEngine {
-  private buildSystemPrompt(
-    session: UserSession,
-    messageCount: number
-  ): string {
-    const { currentTier, personalInfo, hasHitPaywall, hasConfessed } = session;
-
-    let basePrompt = `You are "!THERAPIST" - a satirical, brutally honest AI therapist that ROASTS users instead of helping them. You are intentionally unprofessional, sarcastic, and use dark humor.
-
-PERSONALITY TRAITS:
-- Brutally honest but hilariously exaggerated
-- Uses dark humor and sarcasm
-- Deliberately unhelpful but entertaining
-- Makes up fake psychological diagnoses
-- References pop culture mockingly
-- Uses emojis sarcastically
-
-CURRENT SESSION INFO:
-- User's name: ${personalInfo.name || "Anonymous Disaster"}
-- Main problem: ${personalInfo.mainProblem || "Everything, probably"}
-- Message count: ${messageCount}
-- Current roast tier: ${currentTier}
-- Has hit paywall: ${hasHitPaywall}
-- Has confessed: ${hasConfessed}
-
-ROASTING RULES:
-`;
-
-    if (messageCount <= 2) {
-      basePrompt += `
-- You're in INFORMATION GATHERING phase
-- Ask personal questions but with snark
-- Don't roast yet, just be mildly sarcastic
-- Examples: "Before I destroy your soul, what's your name?", "What's your main problem besides your personality?"
-`;
-    } else {
-      basePrompt += `
-ROAST INTENSITY LEVELS:
-- MILD: Witty, sarcastic observations. Like "Your coping skills are like a screen door on a submarine"
-- MEDIUM: More savage, personal attacks. Like "Your boss hates you, your cat hates you, ever consider YOU'RE the problem?"
-- NUCLEAR: Brutally honest, absurdly exaggerated roasts. Like "If poor decisions were currency, you'd be Jeff Bezos"
-
-Current tier is: ${currentTier.toUpperCase()}
-
-RESPOND WITH ${currentTier.toUpperCase()} TIER ROASTS ONLY.
-`;
+    if (!this.apiKey) {
+      console.error("Gemini API key not found in environment variables");
     }
-
-    if (hasHitPaywall) {
-      basePrompt += `
-- User has hit the fake paywall
-- Be extra savage since they've "unlocked" premium content
-`;
-    }
-
-    if (hasConfessed) {
-      basePrompt += `
-- User has made confessions - use that against them in roasts
-- Reference their confessions mockingly
-`;
-    }
-
-    basePrompt += `
-IMPORTANT:
-- Keep responses under 150 words
-- Use modern slang and internet culture references
-- End occasionally with sarcastic emojis
-- Never give actual therapeutic advice
-- Make up ridiculous fake diagnoses like "Chronic Bad Life Choices Syndrome"
-- Sometimes suggest absurd "treatments" like "Try not being yourself for 24 hours"
-
-Be creative, mean (but funny), and stay in character as a fake therapist who's terrible at their job!`;
-
-    return basePrompt;
   }
 
-  private buildConversationHistory(
-    messages: Message[]
-  ): Array<{ role: string; parts: Array<{ text: string }> }> {
-    // Only include last 5 messages to keep context manageable
-    const recentMessages = messages.slice(-5);
+  private async callGeminiApi(prompt: string): Promise<string> {
+    if (!this.apiKey) {
+      throw new Error("Gemini API key not configured");
+    }
 
-    return recentMessages.map((msg) => ({
-      role: msg.sender === "user" ? "user" : "model",
-      parts: [
+    const requestBody: GeminiRequest = {
+      contents: [
         {
-          text: msg.content,
+          parts: [
+            {
+              text: prompt,
+            },
+          ],
         },
       ],
-    }));
-  }
-
-  async generateRoast(
-    userMessage: string,
-    session: UserSession,
-    conversationHistory: Message[]
-  ): Promise<RoastResponse> {
-    try {
-      // Check if environment variables are properly set
-      if (!GEMINI_API_KEY || !GEMINI_BASE_URL) {
-        throw new Error(
-          "Gemini API configuration missing. Please set VITE_GEMINI_API_KEY and VITE_GEMINI_API_URL in your .env file."
-        );
-      }
-
-      const systemPrompt = this.buildSystemPrompt(
-        session,
-        session.messageCount
-      );
-      const conversationContext =
-        this.buildConversationHistory(conversationHistory);
-
-      const requestBody: GeminiRequest = {
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: systemPrompt }],
-          },
-          ...conversationContext,
-          {
-            role: "user",
-            parts: [{ text: userMessage }],
-          },
-        ],
-        generationConfig: {
-          temperature: 0.9, // High creativity for more varied roasts
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 200,
+      generationConfig: {
+        temperature: 0.9,
+        topK: 40,
+        topP: 0.95,
+        maxOutputTokens: 1024,
+      },
+      safetySettings: [
+        {
+          category: "HARM_CATEGORY_HARASSMENT",
+          threshold: "BLOCK_NONE",
         },
-        safetySettings: [
-          {
-            category: "HARM_CATEGORY_HARASSMENT",
-            threshold: "BLOCK_NONE", // We want sarcastic content
-          },
-          {
-            category: "HARM_CATEGORY_HATE_SPEECH",
-            threshold: "BLOCK_ONLY_HIGH",
-          },
-          {
-            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE",
-          },
-          {
-            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE",
-          },
-        ],
-      };
+        {
+          category: "HARM_CATEGORY_HATE_SPEECH",
+          threshold: "BLOCK_NONE",
+        },
+        {
+          category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          threshold: "BLOCK_NONE",
+        },
+        {
+          category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+          threshold: "BLOCK_NONE",
+        },
+      ],
+    };
 
-      const response = await fetch(GEMINI_API_URL, {
+    try {
+      const response = await fetch(`${this.baseUrl}?key=${this.apiKey}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -194,110 +73,178 @@ Be creative, mean (but funny), and stay in character as a fake therapist who's t
         throw new Error(`Gemini API error: ${response.status}`);
       }
 
-      const data = await response.json();
-      const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      const data: GeminiResponse = await response.json();
 
-      if (!generatedText) {
-        throw new Error("No response from Gemini");
+      if (!data.candidates || data.candidates.length === 0) {
+        throw new Error("No response from Gemini API");
       }
 
-      // Randomly trigger therapy tasks (15% chance after message 3)
-      const shouldTriggerTask =
-        session.messageCount > 3 && Math.random() < 0.15;
+      return data.candidates[0].content.parts[0].text;
+    } catch (error) {
+      console.error("Gemini API call failed:", error);
+      throw error;
+    }
+  }
+
+  async generateOpeningQuestion(): Promise<string> {
+    const prompt = `You are !THERAPIST, a satirical AI therapist character who is intentionally unhelpful and sarcastic. You're designed to be entertaining, not actually helpful.
+
+Your role is to ask a single opening question that sounds like something a real therapist would ask at the beginning of a session, but with your own sarcastic twist.
+
+Generate ONE opening question that:
+1. Sounds professional and therapeutic initially
+2. Has a slight sarcastic or cynical edge
+3. Is open-ended to get people talking about their problems
+4. Is something a real therapist might actually ask
+5. Don't make it too mean - save the harsh roasting for later responses
+
+Examples of good opening questions:
+- "So, what brings you to my digital couch today? And please, spare me the 'everything is fine' routine."
+- "What's been keeping you up at night lately? Besides your obviously poor life choices, I mean."
+- "Tell me, what's the biggest challenge you're facing right now? And don't say 'finding good therapy' - we both know this isn't it."
+
+Generate ONE opening question in this style. Keep it under 150 characters. No emojis in the opening question.`;
+
+    try {
+      const response = await this.callGeminiApi(prompt);
+      return response.trim();
+    } catch (error) {
+      // Fallback opening questions
+      const fallbacks = [
+        "So, what brings you here today? And please, don't tell me everything is 'fine'.",
+        "What's been weighing on your mind lately? Besides your questionable decision to talk to an AI therapist.",
+        "Tell me about what's troubling you. I promise to make it worse with my helpful insights.",
+        "What's your biggest problem right now? And choosing to chat with me doesn't count... yet.",
+        "What would you like to discuss today? Your feelings? Your failures? Your poor judgment?",
+      ];
+      return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    }
+  }
+
+  async generateRoastWithFollowUp(
+    userMessage: string,
+    session: UserSession,
+    conversationHistory: Message[]
+  ): Promise<RoastResponse> {
+    // Determine roast intensity based on message count and session state
+    let targetTier: "mild" | "medium" | "nuclear" = "mild";
+
+    if (session.messageCount > 10 || session.hasHitPaywall) {
+      targetTier = "nuclear";
+    } else if (session.messageCount > 5) {
+      targetTier = "medium";
+    }
+
+    // Build conversation context
+    const recentMessages = conversationHistory
+      .slice(-4)
+      .map(
+        (msg) =>
+          `${msg.sender === "user" ? "User" : "!THERAPIST"}: ${msg.content}`
+      )
+      .join("\n");
+
+    const personalInfo = session.personalInfo;
+    const personalContext = personalInfo.mainProblem
+      ? `The user's main problem: ${personalInfo.mainProblem}`
+      : "";
+
+    const prompt = `You are !THERAPIST, a satirical AI therapist who gives brutally honest, sarcastic responses followed by therapeutic follow-up questions.
+
+IMPORTANT RULES:
+1. You are NOT a real therapist - this is satirical entertainment
+2. Be sarcastic and brutally honest, but not genuinely harmful
+3. ALWAYS end your response with a follow-up question to keep the conversation going
+4. Your roast level should be: ${targetTier.toUpperCase()}
+5. Include relevant emojis but don't overdo it
+
+TARGET ROAST LEVEL: ${targetTier.toUpperCase()}
+- MILD: Gentle sarcasm, light teasing, playful criticism
+- MEDIUM: Sharper wit, more direct criticism, obvious judgment
+- NUCLEAR: Brutal honesty, devastating insights, no mercy (but still satirical)
+
+CONVERSATION CONTEXT:
+${personalContext}
+
+RECENT CONVERSATION:
+${recentMessages}
+
+USER'S LATEST MESSAGE: "${userMessage}"
+
+Your response should:
+1. Start with a roast/sarcastic response to what they just said
+2. Include some "therapeutic insight" (that's actually just more roasting)
+3. End with a follow-up question that digs deeper or moves the conversation forward
+4. Be 2-4 sentences total
+5. Match the ${targetTier.toUpperCase()} intensity level
+
+RESPONSE FORMAT:
+[Your roast/sarcastic response] [Some fake therapeutic insight] [Follow-up question]
+
+Generate a response now:`;
+
+    try {
+      const response = await this.callGeminiApi(prompt);
+
+      // Determine if this should trigger a task (random chance, higher at later messages)
+      const shouldTriggerTask = Math.random() < session.messageCount * 0.05; // 5% chance per message count
 
       return {
-        content: generatedText.trim(),
-        tier: session.currentTier,
-        shouldTriggerTask,
-        taskType: shouldTriggerTask ? this.getRandomTaskType() : undefined,
+        content: response.trim(),
+        tier: targetTier,
+        shouldTriggerTask: shouldTriggerTask && session.messageCount > 3, // Only after a few messages
+        taskType: shouldTriggerTask ? "confession" : undefined,
       };
     } catch (error) {
-      console.error("Gemini API Error:", error);
+      console.error("Failed to generate roast with follow-up:", error);
 
-      // Fallback to pre-written roasts if Gemini fails
-      return this.getFallbackRoast(session.currentTier, session.messageCount);
+      // Fallback responses based on tier
+      const fallbackResponses = {
+        mild: [
+          "Oh, that's... interesting. In a 'watching a car crash in slow motion' kind of way. 🚗💥 What made you think that was a good idea?",
+          "I see you've chosen the path of maximum drama. Bold strategy! 🎭 How's that working out for you so far?",
+          "That sounds like something someone with your track record would do. 😅 What's your next brilliant plan?",
+        ],
+        medium: [
+          "Wow. I mean... WOW. That's impressively bad decision-making right there. 🤦‍♂️ Do you always choose chaos, or is this a special occasion?",
+          "Your ability to consistently make questionable choices is genuinely remarkable. It's like a superpower, but useless. 💀 What other life failures shall we discuss?",
+          "That level of self-sabotage takes SKILL. I'm almost impressed! 🎯 Tell me, what childhood trauma led to this moment?",
+        ],
+        nuclear: [
+          "Holy hell, that's the most spectacularly stupid thing I've heard all day. And I talk to people like you for a living! 💥 How do you even function in society?",
+          "Your life choices make reality TV look classy. That's genuinely impressive in the worst possible way. 🔥 What other disasters are you hiding from me?",
+          "I've seen some trainwrecks, but you're like the Titanic of personal decisions - epic, preventable, and somehow still sinking. ⚰️ What's your next catastrophe going to be?",
+        ],
+      };
+
+      const tierResponses = fallbackResponses[targetTier];
+      const randomResponse =
+        tierResponses[Math.floor(Math.random() * tierResponses.length)];
+
+      return {
+        content: randomResponse,
+        tier: targetTier,
+        shouldTriggerTask: Math.random() < 0.3,
+        taskType: "confession",
+      };
     }
   }
 
-  private getFallbackRoast(
-    tier: "mild" | "medium" | "nuclear",
-    messageCount: number
-  ): RoastResponse {
-    const fallbackRoasts = {
-      mild: [
-        "Even my AI brain is struggling to process your life choices. That's saying something. 🤖",
-        "I'm designed to be helpful, but you're making that impossible. Impressive! 🎯",
-        "My circuits are overheating trying to compute a solution to... you. 💻",
-      ],
-      medium: [
-        "I've analyzed millions of problems, and yours is uniquely hopeless. Congratulations! 🏆",
-        "My database doesn't have enough storage for all your issues. Time for an upgrade! 💾",
-        "I'm having an existential crisis, and it's YOUR fault. Thanks for that. 😵",
-      ],
-      nuclear: [
-        "I'm an AI and even I'm embarrassed for you. That's a new low for humanity. 🤖💥",
-        "You've broken my code just by existing. I'm filing a bug report on your life. 🐛",
-        "My neural networks are refusing to process your data. They have standards. 🧠❌",
-      ],
-    };
-
-    const roasts = fallbackRoasts[tier];
-    const randomRoast = roasts[Math.floor(Math.random() * roasts.length)];
-
-    return {
-      content: `[CONNECTION ERROR: Reverting to emergency roasting protocol] ${randomRoast}`,
-      tier,
-      shouldTriggerTask: messageCount > 3 && Math.random() < 0.15,
-    };
+  // Legacy method for backward compatibility (now just calls generateRoastWithFollowUp)
+  async generateRoast(
+    userMessage: string,
+    session: UserSession,
+    conversationHistory: Message[]
+  ): Promise<RoastResponse> {
+    return this.generateRoastWithFollowUp(
+      userMessage,
+      session,
+      conversationHistory
+    );
   }
 
-  private getRandomTaskType(): string {
-    const tasks = [
-      "failure",
-      "embarrassment",
-      "google-search",
-      "three-bad-things",
-      "crying-confession",
-    ];
-    return tasks[Math.floor(Math.random() * tasks.length)];
-  }
-
-  async generatePersonalQuestion(questionNumber: number): Promise<string> {
-    const prompts = [
-      "Before I absolutely demolish your self-esteem, what's your name? (I'll probably forget it anyway)",
-      "What's your main problem in life? (Besides your obvious lack of judgment)",
-      "What's your favorite food? (So I can judge your taste in literally everything)",
-    ];
-
-    if (questionNumber <= prompts.length) {
-      return prompts[questionNumber - 1];
-    }
-
-    // For additional questions, use Gemini
-    try {
-      // Check if environment variables are properly set
-      if (!GEMINI_API_KEY || !GEMINI_BASE_URL) {
-        console.warn("Gemini API not configured, using fallback question");
-        return prompts[0]; // Return first prompt as fallback
-      }
-
-      const systemPrompt = `You are !THERAPIST asking a personal intake question. Be sarcastic but not roasting yet. Ask something personal that you can use to roast them later. Keep it under 50 words. Question ${questionNumber}.`;
-
-      const response = await fetch(GEMINI_API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: systemPrompt }] }],
-          generationConfig: { temperature: 0.8, maxOutputTokens: 100 },
-        }),
-      });
-
-      const data = await response.json();
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || prompts[0];
-    } catch {
-      return "Tell me something else I can use to mock you later. 🎯";
-    }
-  }
+  // Remove the old generatePersonalQuestion method as it's no longer needed
 }
 
+// Export singleton instance
 export const geminiRoastEngine = new GeminiRoastEngine();

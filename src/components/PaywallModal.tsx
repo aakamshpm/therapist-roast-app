@@ -12,6 +12,18 @@ const PaywallModal: React.FC<PaywallModalProps> = ({
   const [showConfessionInput, setShowConfessionInput] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [confessionLoading, setConfessionLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("");
+
+  const getRandomPaymentMethod = () => {
+    const methods = [
+      "💳 Credit Card",
+      "🏧 Debit Card",
+      "📱 UPI",
+      "💰 PayPal",
+      "🪙 Crypto",
+    ];
+    return methods[Math.floor(Math.random() * methods.length)];
+  };
 
   // Reset state when modal opens/closes
   useEffect(() => {
@@ -20,6 +32,7 @@ const PaywallModal: React.FC<PaywallModalProps> = ({
       setShowConfessionInput(false);
       setPaymentLoading(false);
       setConfessionLoading(false);
+      setPaymentMethod(getRandomPaymentMethod()); // Set payment method once when modal opens
     }
   }, [isVisible]);
 
@@ -46,17 +59,6 @@ const PaywallModal: React.FC<PaywallModalProps> = ({
       setConfessionLoading(false);
       onConfession(confessionText.trim());
     }, 1500);
-  };
-
-  const getRandomPaymentMethod = () => {
-    const methods = [
-      "💳 Credit Card",
-      "🏧 Debit Card",
-      "📱 UPI",
-      "💰 PayPal",
-      "🪙 Crypto",
-    ];
-    return methods[Math.floor(Math.random() * methods.length)];
   };
 
   return (
@@ -119,7 +121,7 @@ const PaywallModal: React.FC<PaywallModalProps> = ({
                     <span>PROCESSING...</span>
                   </span>
                 ) : (
-                  <span>💳 {getRandomPaymentMethod()}</span>
+                  <span>{paymentMethod}</span>
                 )}
               </button>
             </div>

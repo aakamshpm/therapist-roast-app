@@ -18,6 +18,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     inputRef.current?.focus();
   }, []);
 
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   // Disable input when typing
   useEffect(() => {
     setIsInputDisabled(isTyping);
@@ -66,13 +74,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full max-h-[calc(100vh-300px)]">
+    <div className="flex flex-col flex-1">
       {/* Chat Messages Container */}
       <div
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4 min-h-[400px] bg-beige/20 ugly-border"
+        className="flex-1 overflow-y-auto p-4 space-y-4 bg-beige/20 ugly-border"
         style={{
           scrollBehavior: "smooth",
+          minHeight: "400px",
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000' fill-opacity='0.03'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20s-20-8.954-20-20 8.954-20 20-20 20 8.954 20 20z'/%3E%3C/g%3E%3C/svg%3E")`,
         }}
       >
@@ -139,7 +148,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       </div>
 
       {/* Input Section */}
-      <div className="p-4 wood-panel ugly-border border-t-4">
+      <div className="p-4 wood-panel ugly-border border-t-4 flex-shrink-0">
         {/* Session Status Bar */}
         {session && (
           <div className="mb-3 flex justify-between items-center text-xs font-comic">
@@ -176,7 +185,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
               type="text"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyPress}
               disabled={isInputDisabled}
               placeholder={getPlaceholderText()}
               className={`w-full px-4 py-3 font-comic text-wood bg-hospital-green ugly-border 

@@ -10,7 +10,6 @@ import {
   createNewSession,
   loadSession,
   loadMessages,
-  saveSession,
   addMessage,
   updateSession,
   getWelcomeBackMessage,
@@ -54,11 +53,6 @@ function App() {
     initializeApp();
   }, []);
 
-  // Auto-scroll to bottom when new messages arrive
-  useEffect(() => {
-    scrollToBottom();
-  }, [appState.messages]);
-
   const initializeApp = async () => {
     setAppState((prev) => ({ ...prev, isLoading: true }));
 
@@ -74,13 +68,13 @@ function App() {
 
         // Add welcome message
         const welcomeMessage =
-          "Welcome to !THERAPIST - where your problems get worse, but at least you'll laugh about it! 💀🎭\n\nI'm your definitely-not-licensed AI therapist, and I'm here to make your day worse in the most entertaining way possible.\n\nLet's start with the basics...";
+          "Welcome to !THERAPIST - where your problems get worse, but at least you'll laugh about it! 💀🎭\n\nI'm your definitely-not-licensed AI therapist, and I'm here to make your day worse in the most entertaining way possible.\n\nLet's start...";
 
         messages = addMessage(messages, welcomeMessage, "ai");
 
-        // Ask first question
+        // Ask the single opening question
         setTimeout(() => {
-          askPersonalQuestion(1);
+          askOpeningQuestion();
         }, 2000);
       } else {
         // Returning user
@@ -109,40 +103,32 @@ function App() {
     }
   };
 
-  const askPersonalQuestion = async (questionNumber: number) => {
+  const askOpeningQuestion = async () => {
     if (!appState.session) return;
 
     setAppState((prev) => ({ ...prev, isTyping: true }));
 
     try {
-      const question = await geminiRoastEngine.generatePersonalQuestion(
-        questionNumber
-      );
+      // Generate a proper therapeutic opening question
+      const openingQuestion = await geminiRoastEngine.generateOpeningQuestion();
 
       setTimeout(() => {
         setAppState((prev) => ({
           ...prev,
-          messages: addMessage(prev.messages, question, "ai"),
+          messages: addMessage(prev.messages, openingQuestion, "ai"),
           isTyping: false,
         }));
       }, 1500);
     } catch (error) {
-      console.error("Failed to generate question:", error);
-      // Fallback question
-      const fallbackQuestions = [
-        "What's your name? (So I know what to call you while destroying your self-esteem)",
-        "What's your biggest problem? (Besides your obvious lack of judgment)",
-        "Any other disasters you'd like to share? 🎭",
-      ];
+      console.error("Failed to generate opening question:", error);
+      // Fallback opening question (like a real therapist would ask)
+      const fallbackQuestion =
+        "So, what brings you here today? What's been weighing on your mind lately?";
 
       setTimeout(() => {
         setAppState((prev) => ({
           ...prev,
-          messages: addMessage(
-            prev.messages,
-            fallbackQuestions[questionNumber - 1] || fallbackQuestions[0],
-            "ai"
-          ),
+          messages: addMessage(prev.messages, fallbackQuestion, "ai"),
           isTyping: false,
         }));
       }, 1500);
@@ -151,30 +137,28 @@ function App() {
 
   const handleUserMessage = async (message: string) => {
     if (!appState.session || appState.isLoading) return;
+
     // Add user message
     const updatedMessages = addMessage(appState.messages, message, "user");
     const updatedSession = updateSession(appState.session, {
       messageCount: appState.session.messageCount + 1,
     });
+
     setAppState((prev) => ({
       ...prev,
       messages: updatedMessages,
       session: updatedSession,
       isTyping: true,
     }));
-    // Store personal info from first few messages
-    if (updatedSession.messageCount <= 3) {
+
+    // Store the first response as main problem for context
+    if (updatedSession.messageCount === 1) {
       const personalInfo = { ...updatedSession.personalInfo };
-      if (updatedSession.messageCount === 1) {
-        personalInfo.name = message;
-      } else if (updatedSession.messageCount === 2) {
-        personalInfo.mainProblem = message;
-      } else if (updatedSession.messageCount === 3) {
-        personalInfo.favoriteFood = message;
-      }
+      personalInfo.mainProblem = message;
       const sessionWithInfo = updateSession(updatedSession, { personalInfo });
       setAppState((prev) => ({ ...prev, session: sessionWithInfo }));
     }
+
     // Check for paywall trigger
     if (
       shouldTriggerPaywall(
@@ -193,54 +177,48 @@ function App() {
       }, 1500);
       return;
     }
-    // Generate AI response
+
+    // Generate roast + follow-up question response
     try {
-      let question_number = 0;
-      if (updatedSession.messageCount <= 3) {
-        question_number = updatedSession.messageCount + 1;
-      }
-      if (question_number > 0 && question_number <= 3) {
-        // Still in question phase
-        setTimeout(async () => {
-          await askPersonalQuestion(question_number);
-        }, 2000);
-      } else {
-        // Generate roast response
-        const roastResponse = await geminiRoastEngine.generateRoast(
+      const roastWithFollowUp =
+        await geminiRoastEngine.generateRoastWithFollowUp(
           message,
           updatedSession,
           updatedMessages
         );
-        setTimeout(() => {
-          const messagesWithRoast = addMessage(
-            updatedMessages,
-            roastResponse.content,
-            "ai",
-            { roastTier: roastResponse.tier }
-          );
-          setAppState((prev) => ({
-            ...prev,
-            messages: messagesWithRoast,
-            isTyping: false,
-          }));
-          // Trigger therapy task if needed
-          if (roastResponse.shouldTriggerTask && roastResponse.taskType) {
-            setTimeout(() => {
-              const task = getRandomTask();
-              setAppState((prev) => ({
-                ...prev,
-                currentTask: task,
-                showTask: true,
-              }));
-            }, 3000);
-          }
-        }, 2000);
-      }
+
+      setTimeout(() => {
+        const messagesWithRoast = addMessage(
+          updatedMessages,
+          roastWithFollowUp.content,
+          "ai",
+          { roastTier: roastWithFollowUp.tier }
+        );
+
+        setAppState((prev) => ({
+          ...prev,
+          messages: messagesWithRoast,
+          isTyping: false,
+        }));
+
+        // Trigger therapy task if needed
+        if (roastWithFollowUp.shouldTriggerTask) {
+          setTimeout(() => {
+            const task = getRandomTask();
+            setAppState((prev) => ({
+              ...prev,
+              currentTask: task,
+              showTask: true,
+            }));
+          }, 3000);
+        }
+      }, 2000);
     } catch (error) {
       console.error("Failed to generate response:", error);
+
       setTimeout(() => {
         const errorMessage =
-          "Even my AI brain is struggling to process your existence. That's... actually impressive in the worst way possible. 🤖💥";
+          "Even my AI brain is struggling to process your existence. That's... actually impressive in the worst way possible. 🤖💥\n\nBut seriously, what else is going wrong in your life?";
         setAppState((prev) => ({
           ...prev,
           messages: addMessage(updatedMessages, errorMessage, "ai"),
@@ -312,18 +290,23 @@ function App() {
 
   const handleTaskComplete = (response: string) => {
     if (!appState.currentTask || !appState.session) return;
+
     const isCompleted = checkTaskResponse(appState.currentTask, response);
     const roastResponse = getTaskResponseRoast(
       appState.currentTask,
       response,
       isCompleted
     );
+
     let updatedMessages = addMessage(appState.messages, response, "user");
     updatedMessages = addMessage(updatedMessages, roastResponse, "ai");
+
     const completedTasks = isCompleted
       ? [...appState.session.completedTasks, appState.currentTask.id]
       : appState.session.completedTasks;
+
     const updatedSession = updateSession(appState.session, { completedTasks });
+
     setAppState((prev) => ({
       ...prev,
       session: updatedSession,
@@ -337,7 +320,7 @@ function App() {
     if (!appState.currentTask || !appState.session) return;
 
     const skipRoast =
-      "Can't even complete a simple task? This explains SO much about your life. Moving on... 🙄";
+      "Can't even complete a simple task? This explains SO much about your life. Moving on... 🙄\n\nWhat other failures would you like to discuss?";
     const updatedMessages = addMessage(appState.messages, skipRoast, "ai");
 
     setAppState((prev) => ({
@@ -348,9 +331,9 @@ function App() {
     }));
   };
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  // const scrollToBottom = () => {
+  //   // messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  // };
 
   if (appState.isLoading) {
     return (
@@ -362,12 +345,12 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-hot-pink via-ugly-teal to-puke-yellow">
-      <div className="min-h-screen wood-panel">
+    <div className="min-h-screen bg-gradient-to-br from-hot-pink via-ugly-teal to-puke-yellow flex flex-col">
+      <div className="min-h-screen wood-panel flex flex-col">
         <Header session={appState.session} />
 
-        <main className="container mx-auto px-4 py-6 min-h-[calc(100vh-200px)]">
-          <div className="max-w-4xl mx-auto">
+        <main className="flex-1 container mx-auto px-4 py-6 flex flex-col">
+          <div className="mx-auto w-[1000px] flex-1 flex flex-col">
             <ChatWindow
               messages={appState.messages}
               onSendMessage={handleUserMessage}
@@ -378,7 +361,7 @@ function App() {
           </div>
         </main>
 
-        {/* <Footer /> */}
+        <Footer />
 
         {/* Modals */}
         <PaywallModal
